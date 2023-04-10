@@ -1,0 +1,67 @@
+import React, { useEffect, useState } from "react";
+
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_500Medium,
+} from "@expo-google-fonts/inter";
+import {
+  Archivo_400Regular,
+  Archivo_500Medium,
+  Archivo_600SemiBold,
+} from "@expo-google-fonts/archivo";
+
+import { ThemeProvider } from "styled-components";
+import theme from "./global/styles/theme";
+import Home from "./src/screens/Home";
+
+import * as SplashScreen from "expo-splash-screen";
+import * as Font from "expo-font";
+import Entypo from "@expo/vector-icons/Entypo";
+
+SplashScreen.preventAutoHideAsync();
+
+function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Archivo_400Regular,
+    Archivo_500Medium,
+    Archivo_600SemiBold,
+  });
+
+  useEffect(() => {
+    const loadResources = async () => {
+      try {
+        await Font.loadAsync(Entypo.font);
+      } catch (error) {
+        console.warn(error);
+      } finally {
+        setAppIsReady(true);
+      }
+    };
+    loadResources();
+  }, []);
+
+  useEffect(() => {
+    const hideScreenSplash = async () => {
+      await SplashScreen.hideAsync();
+    };
+    if (appIsReady && fontsLoaded) {
+      hideScreenSplash();
+    }
+  }, [appIsReady, fontsLoaded]);
+
+  if (!appIsReady) {
+    return null;
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Home />
+    </ThemeProvider>
+  );
+}
+
+export default App;
