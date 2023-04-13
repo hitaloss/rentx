@@ -7,6 +7,7 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
+import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import expo.modules.ReactActivityDelegateWrapper;
 
@@ -45,6 +46,16 @@ public class MainActivity extends ReactActivity {
         DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
         ));
   }
+
+    @Override
+  protected ReactActivityDelegate createReactActivityDelegate() {
+    return new ReactActivityDelegate(this, getMainComponentName()) {
+      @Override
+      protected ReactRootView createRootView() {
+        return new RNGestureHandlerEnabledRootView(MainActivity.this);
+        }
+      };
+    }
 
   /**
    * Align the back button behavior with Android S
