@@ -11,13 +11,15 @@ import {
   Archivo_600SemiBold,
 } from "@expo-google-fonts/archivo";
 
+import CarDetails from "./src/screens/CarDetails";
+
 import { ThemeProvider } from "styled-components";
 import theme from "./global/styles/theme";
-import Home from "./src/screens/Home";
 
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import Entypo from "@expo/vector-icons/Entypo";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -58,9 +60,11 @@ function App() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Home />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider theme={theme}>
+        <CarDetails />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
 
