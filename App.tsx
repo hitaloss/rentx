@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 
+import { NavigationContainer } from "@react-navigation/native";
+import StackRoutes from "./src/routes/stack.routes";
+
 import {
   useFonts,
   Inter_400Regular,
@@ -10,8 +13,6 @@ import {
   Archivo_500Medium,
   Archivo_600SemiBold,
 } from "@expo-google-fonts/archivo";
-
-import CarDetails from "./src/screens/CarDetails";
 
 import { ThemeProvider } from "styled-components";
 import theme from "./global/styles/theme";
@@ -61,9 +62,11 @@ function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider theme={theme}>
-        <CarDetails />
-      </ThemeProvider>
+      <NavigationContainer>
+        <ThemeProvider theme={theme}>
+          <StackRoutes />
+        </ThemeProvider>
+      </NavigationContainer>
     </GestureHandlerRootView>
   );
 }
