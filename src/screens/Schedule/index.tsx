@@ -17,6 +17,7 @@ import { useTheme } from "styled-components";
 import ArrowSvg from "./../../assets/Thin_arrow_left.svg";
 import { StatusBar } from "react-native";
 import Button from "../../components/Button";
+import Calendar from "../../components/Calendar";
 
 function Schedule() {
   const theme = useTheme();
@@ -51,7 +52,9 @@ function Schedule() {
         </RentalPeriod>
       </Header>
 
-      <Content></Content>
+      <Content>
+        <Calendar />
+      </Content>
 
       <Footer>
         <Button title="Confirmar" color={theme.colors.main.light} />
