@@ -27,8 +27,21 @@ import gasSvg from "./../../assets/Drop.svg";
 import gearSvg from "./../../assets/Gear.svg";
 import personSvg from "./../../assets/Account.svg";
 import Button from "../../components/Button";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-function CarDetails() {
+type RootStackParamList = {
+  Schedule: undefined;
+};
+
+interface Props {
+  navigation: NativeStackNavigationProp<RootStackParamList, "Schedule">;
+}
+
+function CarDetails({ navigation }: Props) {
+  const handleSchedule = () => {
+    navigation.navigate("Schedule");
+  };
+
   return (
     <Container>
       <Header>
@@ -71,7 +84,7 @@ function CarDetails() {
         </About>
       </Content>
       <Footer>
-        <Button title="Confirmar" />
+        <Button title="Escolher período do aluguel" onPress={handleSchedule} />
       </Footer>
     </Container>
   );

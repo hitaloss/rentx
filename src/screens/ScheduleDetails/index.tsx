@@ -40,9 +40,22 @@ import gasSvg from "./../../assets/Drop.svg";
 import gearSvg from "./../../assets/Gear.svg";
 import personSvg from "./../../assets/Account.svg";
 import Button from "../../components/Button";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-function ScheduleDetails() {
+type RootStackParamList = {
+  ScheduleComplete: undefined;
+};
+
+interface Props {
+  navigation: NativeStackNavigationProp<RootStackParamList, "ScheduleComplete">;
+}
+
+function ScheduleDetails({ navigation }: Props) {
   const theme = useTheme();
+
+  const handleScheduleConfirm = () => {
+    navigation.navigate("ScheduleComplete");
+  };
 
   return (
     <Container>
@@ -111,7 +124,12 @@ function ScheduleDetails() {
         </RentalPrice>
       </Content>
       <Footer>
-        <Button title="Confirmar" />
+        <Button
+          title="Alugar agora"
+          onPress={handleScheduleConfirm}
+          color={theme.colors.success}
+          textColor={theme.colors.background[2]}
+        />
       </Footer>
     </Container>
   );

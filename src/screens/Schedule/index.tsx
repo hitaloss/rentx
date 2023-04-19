@@ -18,9 +18,22 @@ import ArrowSvg from "./../../assets/Thin_arrow_left.svg";
 import { StatusBar } from "react-native";
 import Button from "../../components/Button";
 import Calendar from "../../components/Calendar";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-function Schedule() {
+type RootStackParamList = {
+  ScheduleDetails: undefined;
+};
+
+interface Props {
+  navigation: NativeStackNavigationProp<RootStackParamList, "ScheduleDetails">;
+}
+
+function Schedule({ navigation }: Props) {
   const theme = useTheme();
+
+  const handleScheduleDetails = () => {
+    navigation.navigate("ScheduleDetails");
+  };
 
   return (
     <Container>
@@ -57,7 +70,7 @@ function Schedule() {
       </Content>
 
       <Footer>
-        <Button title="Confirmar" color={theme.colors.main.light} />
+        <Button title="Confirmar" onPress={handleScheduleDetails} />
       </Footer>
     </Container>
   );
