@@ -16,19 +16,10 @@ import {
 
 import GasSvg from "./../../assets/Drop.svg";
 import { RectButtonProps } from "react-native-gesture-handler";
-
-interface CarData {
-  brand: string;
-  name: string;
-  rent: {
-    period: string;
-    price: number;
-  };
-  thumbnail: string;
-}
+import { ICar } from "../../interfaces/cars";
 
 interface Props extends RectButtonProps {
-  data: CarData;
+  data: ICar;
 }
 
 function Car({ data, ...rest }: Props) {
@@ -59,7 +50,5 @@ function Car({ data, ...rest }: Props) {
     </Container>
   );
 }
-
-// "https://d2ivfcfbdvj3sm.cloudfront.net/7fc965ab77efe6e0fa62e4ca1ea7673bb25e4853091e3d8e88cb/stills_0640_png/MY2021/14922/14922_st0640_116.png"
 
 export default Car;
