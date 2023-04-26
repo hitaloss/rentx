@@ -19,20 +19,16 @@ import {
 import BackButton from "../../components/BackButton";
 import ImageSlider from "../../components/ImageSlider";
 import Accessory from "../../components/Accessory";
-
-import speedSvg from "./../../assets/Speed.svg";
-import powerSvg from "./../../assets/up.svg";
-import handlingSvg from "./../../assets/Steering_wheel.svg";
-import gasSvg from "./../../assets/Drop.svg";
-import gearSvg from "./../../assets/Gear.svg";
-import personSvg from "./../../assets/Account.svg";
 import Button from "../../components/Button";
+
+import { getAccessoryIcon } from "../../utils";
+
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useRoute } from "@react-navigation/native";
 import { ICar } from "../../interfaces/cars";
 
 type RootStackParamList = {
-  Schedule: undefined;
+  Schedule: { car: ICar };
 };
 interface Props {
   navigation: NativeStackNavigationProp<RootStackParamList, "Schedule">;
@@ -48,7 +44,7 @@ function CarDetails({ navigation }: Props) {
   const { car } = route.params as Params;
 
   const handleSchedule = () => {
-    navigation.navigate("Schedule");
+    navigation.navigate("Schedule", { car });
   };
 
   const handleGoBack = () => {
@@ -79,7 +75,11 @@ function CarDetails({ navigation }: Props) {
 
         <Accessories>
           {car.accessories.map((item) => (
-            <Accessory name={item.name} icon={speedSvg} key={item.type} />
+            <Accessory
+              name={item.name}
+              icon={getAccessoryIcon(item.type)}
+              key={item.type}
+            />
           ))}
         </Accessories>
 
