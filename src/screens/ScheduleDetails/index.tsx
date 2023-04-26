@@ -36,7 +36,7 @@ import { useTheme } from "styled-components";
 import speedSvg from "./../../assets/Speed.svg";
 import powerSvg from "./../../assets/up.svg";
 import handlingSvg from "./../../assets/Steering_wheel.svg";
-import gasSvg from "./../../assets/Drop.svg";
+import gasSvg from "./../../assets/Gasoline.svg";
 import gearSvg from "./../../assets/Gear.svg";
 import personSvg from "./../../assets/Account.svg";
 import Button from "../../components/Button";
@@ -57,10 +57,14 @@ function ScheduleDetails({ navigation }: Props) {
     navigation.navigate("ScheduleComplete");
   };
 
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <Container>
       <Header>
-        <BackButton onPress={() => {}} />
+        <BackButton onPress={handleGoBack} />
       </Header>
 
       <CarImages>
