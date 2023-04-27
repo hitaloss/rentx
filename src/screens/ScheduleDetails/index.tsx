@@ -65,6 +65,7 @@ function ScheduleDetails({ navigation }: Props) {
   const [rentalPeriod, setRentalPeriod] = useState<RentalPeriodProps>(
     {} as RentalPeriodProps
   );
+  const [loading, setLoading] = useState(false);
 
   const theme = useTheme();
   const route = useRoute();
@@ -72,25 +73,37 @@ function ScheduleDetails({ navigation }: Props) {
   const rentTotal = (dates.length * car.rent.price).toLocaleString("pt-BR");
 
   const handleScheduleConfirm = async () => {
+    setLoading(true);
     try {
-      const carSchedules = await api.get(`/schedules/${car.id}`);
+      const carSchedules = await api.get(`/schedules_cars/${car.id}`);
       const unavailable_dates = [
         ...carSchedules.data["unavailable_dates"],
         ...dates,
       ];
 
+      await api.post("schedules_users", {
+        user_id: 1,
+        car,
+        startDate: format(getPlatformDate(new Date(dates[0])), "dd/MM/yyyy"),
+        endDate: format(
+          getPlatformDate(new Date(dates[dates.length - 1])),
+          "dd/MM/yyyy"
+        ),
+      });
+
       await api
-        .put(`/schedules/${car.id}`, {
+        .put(`/schedules_cars/${car.id}`, {
           id: car.id,
           unavailable_dates,
         })
         .then(() => navigation.navigate("ScheduleComplete"))
-        .catch(() =>
+        .catch(() => {
           Alert.alert(
             "Erro ao agendar",
             "Não foi possível realizar o agendamento"
-          )
-        );
+          );
+          setLoading(false);
+        });
     } catch (error) {
       console.log(error);
     }
@@ -179,6 +192,8 @@ function ScheduleDetails({ navigation }: Props) {
           onPress={handleScheduleConfirm}
           color={theme.colors.success}
           textColor={theme.colors.background[2]}
+          enabled={!loading}
+          loading={loading}
         />
       </Footer>
     </Container>
