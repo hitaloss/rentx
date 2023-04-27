@@ -146,7 +146,11 @@ function Schedule({ navigation }: Props) {
       </Content>
 
       <Footer>
-        <Button title="Confirmar" onPress={handleScheduleDetails} />
+        <Button
+          title="Confirmar"
+          onPress={handleScheduleDetails}
+          enabled={!!rentalPeriod.startFormatted}
+        />
       </Footer>
     </Container>
   );
