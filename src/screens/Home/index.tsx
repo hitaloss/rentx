@@ -59,8 +59,12 @@ function Home({ navigation }: Props) {
       posY.value = ctx.posY + event.translationY;
     },
     onEnd() {
-      posX.value = withSpring(0);
-      posY.value = withSpring(0);
+      if (posY.value > -600) {
+        posX.value = withSpring(0);
+      } else {
+        posX.value = withSpring(0);
+        posY.value = withSpring(0);
+      }
     },
   });
 
