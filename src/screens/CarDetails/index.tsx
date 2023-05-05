@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { BackHandler, StyleSheet } from "react-native";
 
 import {
   Container,
@@ -82,7 +82,15 @@ function CarDetails({ navigation }: Props) {
 
   const handleGoBack = () => {
     navigation.goBack();
+    BackHandler.addEventListener("hardwareBackPress", () => {
+      return true;
+    });
+    return null;
   };
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", handleGoBack);
+  }, []);
 
   return (
     <Container>

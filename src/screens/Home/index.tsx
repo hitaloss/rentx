@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StatusBar, StyleSheet } from "react-native";
+import { StatusBar, StyleSheet, BackHandler } from "react-native";
 
 import { RFValue } from "react-native-responsive-fontsize";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,6 +21,7 @@ import Loading from "../../components/Loading";
 import Logo from "./../../assets/Logo.svg";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useRoute } from "@react-navigation/native";
 import { ICar } from "../../interfaces/cars";
 
 type RootStackParamList = {
@@ -69,6 +70,7 @@ function Home({ navigation }: Props) {
   });
 
   const theme = useTheme();
+  const route = useRoute();
 
   const handleCarDetails = (car: ICar) => {
     navigation.navigate("CarDetails", { car });
@@ -92,6 +94,12 @@ function Home({ navigation }: Props) {
     }
   }, []);
 
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", () => {
+      return true;
+    });
+  }, []);
+
   return (
     <Container>
       <StatusBar
@@ -102,9 +110,11 @@ function Home({ navigation }: Props) {
       <Header>
         <HeaderContent>
           <Logo width={RFValue(108)} height={RFValue(12)} />
-          <TotalCars>
-            Total de {cars.length} {cars.length > 1 ? "carros" : "carro"}
-          </TotalCars>
+          {!loading && (
+            <TotalCars>
+              Total de {cars.length} {cars.length > 1 ? "carros" : "carro"}
+            </TotalCars>
+          )}
         </HeaderContent>
       </Header>
       {loading ? (
