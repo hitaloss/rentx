@@ -26,6 +26,12 @@ function ImageSlider({ imagesUrl }: Props) {
     setImageIndex(index);
   });
 
+  const snapToInterval = useRef(0);
+
+  const handleLayout = (event: any) => {
+    snapToInterval.current = event.nativeEvent.layout.width;
+  };
+
   return (
     <Container>
       <ImageIndexes>
@@ -38,13 +44,15 @@ function ImageSlider({ imagesUrl }: Props) {
         data={imagesUrl}
         keyExtractor={(key) => key}
         renderItem={({ item }) => (
-          <CarImageWrapper>
+          <CarImageWrapper onLayout={handleLayout}>
             <CarImage source={{ uri: item }} resizeMode="contain" />
           </CarImageWrapper>
         )}
         horizontal
         showsHorizontalScrollIndicator={false}
         onViewableItemsChanged={indexChange.current}
+        snapToInterval={snapToInterval.current}
+        decelerationRate="fast"
       />
     </Container>
   );
