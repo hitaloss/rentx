@@ -9,7 +9,6 @@ interface Props extends RectButtonProps {
   title: string;
   color?: string;
   textColor?: string;
-  enabled?: boolean;
   loading?: boolean;
 }
 
