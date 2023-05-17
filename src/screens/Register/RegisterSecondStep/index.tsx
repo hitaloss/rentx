@@ -1,4 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
+import {
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 import {
   Container,
@@ -9,35 +15,76 @@ import {
   Form,
   FormTitle,
 } from "./styles";
-import BackButton from "../../../components/BackButton";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import Bullet from "../../../components/Bullet";
-import Input from "../../../components/Input";
 import Button from "../../../components/Button";
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-} from "react-native";
-import { useTheme } from "styled-components";
+import BackButton from "../../../components/BackButton";
 import PasswordInput from "../../../components/PasswordInput";
 
+import api from "../../../services/api";
+import { useTheme } from "styled-components";
+import { useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+interface Params {
+  user: {
+    name: string;
+    email: string;
+    driverLicense: string;
+  };
+}
+
 type RootStackParamList = {
-  RegisterCompleted: undefined;
+  Confirmation: {
+    title: string;
+    message: string;
+    nextScreen: "Home" | "SignIn";
+  };
 };
 
 interface Props {
-  navigation: NativeStackNavigationProp<
-    RootStackParamList,
-    "RegisterCompleted"
-  >;
+  navigation: NativeStackNavigationProp<RootStackParamList, "Confirmation">;
 }
 
 function RegisterSecondStep({ navigation }: Props) {
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+
   const theme = useTheme();
+  const route = useRoute();
+
+  const { user } = route.params as Params;
 
   const handleGoBack = () => {
     navigation.goBack();
+  };
+
+  const handleRegister = async () => {
+    if (!password || !passwordConfirm) {
+      return Alert.alert(
+        "Erro ao cadastrar",
+        "Informe a senha e a confirmação de senha"
+      );
+    }
+    if (password !== passwordConfirm) {
+      return Alert.alert("Erro ao cadastrar", "As senhas não coincidem");
+    }
+
+    await api
+      .post("/users", {
+        name: user.name,
+        email: user.email,
+        driver_license: user.driverLicense,
+        password,
+      })
+      .then(() => {
+        navigation.navigate("Confirmation", {
+          title: "Conta criada!",
+          message: `Agora é só fazer login\ne aproveitar.`,
+          nextScreen: "SignIn",
+        });
+      })
+      .catch(() => Alert.alert("Opa!", "Não foi possível cadastrar :("));
   };
 
   return (
@@ -57,14 +104,25 @@ function RegisterSecondStep({ navigation }: Props) {
 
           <Form>
             <FormTitle>2. Senha</FormTitle>
-            <PasswordInput iconName="lock" placeholder="Senha" />
-            <PasswordInput iconName="lock" placeholder="Repetir senha" />
+            <PasswordInput
+              iconName="lock"
+              placeholder="Senha"
+              onChangeText={setPassword}
+              value={password}
+            />
+            <PasswordInput
+              iconName="lock"
+              placeholder="Repetir senha"
+              onChangeText={setPasswordConfirm}
+              value={passwordConfirm}
+            />
           </Form>
 
           <Button
             title="Cadastrar"
             color={theme.colors.success}
             textColor={theme.colors.background[2]}
+            onPress={handleRegister}
           />
         </Container>
       </TouchableWithoutFeedback>
