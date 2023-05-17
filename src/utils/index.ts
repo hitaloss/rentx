@@ -1,4 +1,5 @@
 import addDays from "date-fns/addDays";
+import { Platform } from "react-native"
 
 import SpeedSvg from "./../assets/Speed.svg";
 import AccelerationSvg from "./../assets/up.svg";
@@ -33,8 +34,15 @@ function getAccessoryIcon(type: string) {
   }
 }
 
-function getPlatformDate(date: Date) {
-    return addDays(date, 1)
-}
+type PlatformConstantsSubset = {
+  Manufacturer: string;
+};
 
+function getPlatformDate(date: Date) {
+  if (Platform.OS === "ios" || (Platform.constants as PlatformConstantsSubset).Manufacturer === "Xiaomi") {
+    return addDays(date, 1)
+  } else {
+    return date
+  }
+}
 export {getPlatformDate, getAccessoryIcon}
