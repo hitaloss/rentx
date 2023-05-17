@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   KeyboardAvoidingView,
   StatusBar,
@@ -17,6 +17,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components";
 
 import { signInSchema } from "../../schemas";
+import { AuthContext } from "../../contexts/AuthContext";
 
 type RootStackParamList = {
   RegisterFirstStep: undefined;
@@ -33,11 +34,13 @@ function SignIn({ navigation }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { signIn } = useContext(AuthContext);
   const theme = useTheme();
 
   const handleSignIn = async () => {
     try {
       await signInSchema.validate({ email, password });
+      await signIn({ email, password });
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
         Alert.alert("Erro na autenticação", error.message);
@@ -100,7 +103,7 @@ function SignIn({ navigation }: Props) {
               title="Criar conta gratuita"
               onPress={handleNewAccount}
               loading={false}
-              enabled={false}
+              enabled
               color={theme.colors.background[2]}
               textColor={theme.colors.header}
             />
