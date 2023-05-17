@@ -49,11 +49,15 @@ interface Params {
 }
 
 type RootStackParamList = {
-  ScheduleComplete: undefined;
+  Confirmation: {
+    title: string;
+    message: string;
+    nextScreen: "Home" | "SignIn";
+  };
 };
 
 interface Props {
-  navigation: NativeStackNavigationProp<RootStackParamList, "ScheduleComplete">;
+  navigation: NativeStackNavigationProp<RootStackParamList, "Confirmation">;
 }
 
 interface RentalPeriodProps {
@@ -70,7 +74,7 @@ function ScheduleDetails({ navigation }: Props) {
   const theme = useTheme();
   const route = useRoute();
   const { car, dates } = route.params as Params;
-  const rentTotal = (dates.length * car.rent.price).toLocaleString("pt-BR");
+  const rentTotal = (dates.length * car.price).toLocaleString("pt-BR");
 
   const handleScheduleConfirm = async () => {
     setLoading(true);
@@ -96,7 +100,13 @@ function ScheduleDetails({ navigation }: Props) {
           id: car.id,
           unavailable_dates,
         })
-        .then(() => navigation.navigate("ScheduleComplete"))
+        .then(() =>
+          navigation.navigate("Confirmation", {
+            title: "Carro alugado!",
+            message: `Agora você só precisa ir\naté a concessinária da RENTX\npegar seu automóvel.`,
+            nextScreen: "Home",
+          })
+        )
         .catch(() => {
           Alert.alert(
             "Erro ao agendar",
@@ -140,8 +150,8 @@ function ScheduleDetails({ navigation }: Props) {
             <Name>{car.name}</Name>
           </Description>
           <Rent>
-            <Period>{car.rent.period}</Period>
-            <Price>R$ {car.rent.price}</Price>
+            <Period>{car.period}</Period>
+            <Price>R$ {car.price}</Price>
           </Rent>
         </Details>
 
@@ -181,7 +191,7 @@ function ScheduleDetails({ navigation }: Props) {
         <RentalPrice>
           <RentalPriceLabel>Total</RentalPriceLabel>
           <RentalPriceDetails>
-            <RentalPriceInstallments>{`R$ ${car.rent.price} x${dates.length} diárias`}</RentalPriceInstallments>
+            <RentalPriceInstallments>{`R$ ${car.price} x${dates.length} diárias`}</RentalPriceInstallments>
             <RentalPriceValue>R$ {rentTotal}</RentalPriceValue>
           </RentalPriceDetails>
         </RentalPrice>
