@@ -21,6 +21,7 @@ import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import Entypo from "@expo/vector-icons/Entypo";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Providers from "./src/contexts";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -64,7 +65,9 @@ function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         <ThemeProvider theme={theme}>
-          <StackRoutes />
+          <Providers>
+            <StackRoutes />
+          </Providers>
         </ThemeProvider>
       </NavigationContainer>
     </GestureHandlerRootView>
