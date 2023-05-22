@@ -82,15 +82,7 @@ function CarDetails({ navigation }: Props) {
 
   const handleGoBack = () => {
     navigation.goBack();
-    BackHandler.addEventListener("hardwareBackPress", () => {
-      return true;
-    });
-    return null;
   };
-
-  useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", handleGoBack);
-  }, []);
 
   return (
     <Container>
