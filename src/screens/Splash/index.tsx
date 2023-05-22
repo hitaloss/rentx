@@ -17,11 +17,11 @@ import Animated, {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type RootStackParamList = {
-  Home: undefined;
+  SignIn: undefined;
 };
 
 interface Props {
-  navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
+  navigation: NativeStackNavigationProp<RootStackParamList, "SignIn">;
 }
 
 function Splash({ navigation }: Props) {
@@ -53,7 +53,7 @@ function Splash({ navigation }: Props) {
 
   const startApp = () => {
     setTimeout(() => {
-      navigation.navigate("Home");
+      navigation.navigate("SignIn");
     }, 5400);
   };
 
@@ -64,7 +64,7 @@ function Splash({ navigation }: Props) {
         easing: Easing.bezier(0, 0.89, 1, 0.1),
       });
     }, 2000);
-    const sequenceAnimation = withTiming(50, { duration: 2500 }, () => {
+    const sequenceAnimation = withTiming(50, { duration: 2400 }, () => {
       "worklet";
       runOnJS(startApp)();
     });
