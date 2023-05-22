@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 import { NavigationContainer } from "@react-navigation/native";
-import StackRoutes from "./src/routes/stack.routes";
 
 import {
   useFonts,
@@ -22,6 +21,7 @@ import * as Font from "expo-font";
 import Entypo from "@expo/vector-icons/Entypo";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Providers from "./src/contexts";
+import Routes from "./src/routes";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -66,7 +66,7 @@ function App() {
       <NavigationContainer>
         <ThemeProvider theme={theme}>
           <Providers>
-            <StackRoutes />
+            <Routes />
           </Providers>
         </ThemeProvider>
       </NavigationContainer>
