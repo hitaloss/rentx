@@ -32,7 +32,7 @@ function TabRoutes() {
       }}
     >
       <Screen
-        name="Home"
+        name="HomeStack"
         component={StackRoutes}
         options={{
           tabBarIcon: ({ color }) => (
