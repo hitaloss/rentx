@@ -10,7 +10,7 @@ import AuthRoutes from "./auth.routes";
 function Routes() {
   const { user } = useContext(AuthContext);
 
-  return user ? <TabRoutes /> : <AuthRoutes />;
+  return user.id ? <TabRoutes /> : <AuthRoutes />;
 }
 
 export default Routes;
