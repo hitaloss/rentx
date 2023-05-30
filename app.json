@@ -7,7 +7,7 @@
       "**/*"
     ],
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splashscreen_image.png",
       "backgroundColor": "#1B1B1F"
     },
     "plugins": [
