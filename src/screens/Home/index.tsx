@@ -69,7 +69,7 @@ function Home({ navigation }: Props) {
   //   },
   // });
 
-  const theme = useTheme();
+  // const theme = useTheme();
   // const route = useRoute();
 
   const handleCarDetails = (car: ICar) => {
