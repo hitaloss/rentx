@@ -3,7 +3,6 @@ import { Platform } from "react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import Home from "../screens/Home";
 import UserCars from "../screens/UserCars";
 import StackRoutes from "./app.stack.routes";
 
@@ -11,6 +10,7 @@ import HomeSvg from "../assets/home.svg";
 import CarSvg from "../assets/Car.svg";
 import PeopleSvg from "../assets/people.svg";
 import { useTheme } from "styled-components";
+import Profile from "../screens/Profile";
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -51,7 +51,7 @@ function TabRoutes() {
       />
       <Screen
         name="Profile"
-        component={Home}
+        component={Profile}
         options={{
           tabBarIcon: ({ color }) => (
             <PeopleSvg height={24} width={24} fill={color} />
