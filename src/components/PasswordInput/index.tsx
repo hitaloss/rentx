@@ -6,6 +6,7 @@ import {
   IconContainer,
   InputText,
   PasswordIconContainer,
+  VisibleButton,
 } from "./styles";
 
 import { Feather } from "@expo/vector-icons";
@@ -55,9 +56,10 @@ function PasswordInput({ iconName, value, ...rest }: Props) {
         secureTextEntry={!isVisible}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        autoCorrect={false}
       />
 
-      <BorderlessButton rippleRadius={0} onPress={handlePasswordVisible}>
+      <VisibleButton onPress={handlePasswordVisible}>
         <PasswordIconContainer>
           <Feather
             name={isVisible ? "eye" : "eye-off"}
@@ -65,7 +67,7 @@ function PasswordInput({ iconName, value, ...rest }: Props) {
             color={theme.colors.caption}
           />
         </PasswordIconContainer>
-      </BorderlessButton>
+      </VisibleButton>
     </Container>
   );
 }
