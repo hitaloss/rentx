@@ -23,6 +23,9 @@ interface LoginCredentials {
 interface AuthContextData {
   user: User;
   signIn: (credentials: LoginCredentials) => Promise<void>;
+  signOut: () => Promise<void>;
+  userUpdate: (user: User) => Promise<void>;
+  loading: boolean;
 }
 
 interface Props {
@@ -35,8 +38,9 @@ export const AuthContext = createContext<AuthContextData>(
 
 function AuthProvider({ children }: Props) {
   const [data, setData] = useState<User>({} as User);
+  const [loading, setLoading] = useState(true);
 
-  async function signIn({ email, password }: LoginCredentials) {
+  const signIn = async ({ email, password }: LoginCredentials) => {
     try {
       const res = await api.post("/sessions", { email, password });
 
@@ -59,10 +63,45 @@ function AuthProvider({ children }: Props) {
       setData({ ...user, token });
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(String(error));
+        throw new Error(error.message);
       }
     }
-  }
+  };
+
+  const signOut = async () => {
+    try {
+      const userCollection = database.get<ModelUser>("users");
+      await database.action(async () => {
+        const userSelected = await userCollection.find(data.id);
+        await userSelected.destroyPermanently();
+        setData({} as User);
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+    }
+  };
+
+  const userUpdate = async (user: User) => {
+    try {
+      const userCollection = database.get<ModelUser>("users");
+      await database.action(async () => {
+        const userSelected = await userCollection.find(user.id);
+        await userSelected.update((userData) => {
+          userData.name = user.name;
+          userData.driver_license = user.driver_license;
+          userData.avatar = user.avatar;
+        });
+      });
+
+      setData(user);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+    }
+  };
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -73,13 +112,16 @@ function AuthProvider({ children }: Props) {
         const userData = res[0]._raw as unknown as User;
         api.defaults.headers.authorization = `Bearer ${userData.token}`;
         setData(userData);
+        setLoading(false);
       }
     };
     loadUserData();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user: data, signIn }}>
+    <AuthContext.Provider
+      value={{ user: data, signIn, signOut, userUpdate, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
