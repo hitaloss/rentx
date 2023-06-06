@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { FlatList } from "react-native";
-import { ICar } from "../../interfaces/cars";
+import { Car as ModelCar } from "../../database/models/Car";
 import { RectButton } from "react-native-gesture-handler";
 
 export const Container = styled.View`
@@ -33,7 +33,7 @@ export const TotalCars = styled.Text`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-export const CarList = styled(FlatList<ICar>).attrs({
+export const CarList = styled(FlatList<ModelCar>).attrs({
   contentContainerStyle: {
     padding: 24,
   },

@@ -15,15 +15,14 @@ import {
 } from "./styles";
 
 import { RectButtonProps } from "react-native-gesture-handler";
-import { ICar } from "../../interfaces/cars";
+import { Car as ModelCar } from "../../database/models/Car";
 import { getAccessoryIcon } from "../../utils";
 
 interface Props extends RectButtonProps {
-  data: ICar;
+  data: ModelCar;
 }
 
 function Car({ data, ...rest }: Props) {
-  const theme = useTheme();
   const MotorIcon = getAccessoryIcon(data.fuel_type);
 
   return (
