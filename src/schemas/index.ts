@@ -10,3 +10,8 @@ export const registerSchema = Yup.object().shape({
     email: Yup.string().required("Email obrigatório").email("Email válido"),
     driverLicense: Yup.string().required("CNH é obrigatória").min(11, "CNH inválida")
 })
+
+export const updateSchema = Yup.object().shape({
+    name: Yup.string().required("Nome obrigatório").min(3, "Digite um nome válido"),
+    driverLicense: Yup.string().required("CNH é obrigatória").min(11, "CNH inválida")
+})
