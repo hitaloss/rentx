@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { StatusBar, StyleSheet } from "react-native";
+import { Button, StatusBar, StyleSheet } from "react-native";
 
-import { RFValue } from "react-native-responsive-fontsize";
-import api from "../../services/api";
-import { useTheme } from "styled-components";
+// import { useTheme } from "styled-components";
 // import { useRoute } from "@react-navigation/native";
 // import { Ionicons } from "@expo/vector-icons";
 // import { RectButton, PanGestureHandler } from "react-native-gesture-handler";
@@ -19,13 +17,18 @@ import { CarList, Container, Header, HeaderContent, TotalCars } from "./styles";
 import Car from "../../components/Car";
 import Loading from "../../components/Loading";
 
+import api from "../../services/api";
 import Logo from "./../../assets/Logo.svg";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ICar } from "../../interfaces/cars";
+import { RFValue } from "react-native-responsive-fontsize";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { synchronize } from "@nozbe/watermelondb/sync";
+import { database } from "../../database";
+import { Car as ModelCar } from "../../database/models/Car";
 
 type RootStackParamList = {
-  CarDetails: { car: ICar };
+  CarDetails: { car: ModelCar };
   UserCars: undefined;
 };
 
@@ -38,7 +41,7 @@ interface Props {
 }
 
 function Home({ navigation }: Props) {
-  const [cars, setCars] = useState<ICar[]>([]);
+  const [cars, setCars] = useState<ModelCar[]>([]);
   const [loading, setLoading] = useState(true);
 
   // const posY = useSharedValue(0);
@@ -71,8 +74,9 @@ function Home({ navigation }: Props) {
 
   // const theme = useTheme();
   // const route = useRoute();
+  const netInfo = useNetInfo();
 
-  const handleCarDetails = (car: ICar) => {
+  const handleCarDetails = (car: ModelCar) => {
     navigation.navigate("CarDetails", { car });
   };
 
@@ -80,11 +84,34 @@ function Home({ navigation }: Props) {
   //   navigation.navigate("UserCars");
   // };
 
+  const offlineSynchronize = async () => {
+    await synchronize({
+      database,
+      pullChanges: async ({ lastPulledAt }) => {
+        const res = await api.get(
+          `cars/sync/pull?lastPulledVersion=${lastPulledAt || 0}`
+        );
+        const { changes, latestVersion } = res.data;
+
+        return { changes, timestamp: latestVersion };
+      },
+      pushChanges: async ({ changes }) => {
+        const user = changes.users;
+
+        if (user) {
+          await api.post(`/users/sync`, user).catch((err) => console.log(err));
+        }
+      },
+    });
+  };
+
   useEffect(() => {
     try {
       const fetchCars = async () => {
-        const res = await api.get("/cars");
-        setCars(res.data);
+        const carCollection = database.get<ModelCar>("cars");
+        const cars = await carCollection.query().fetch();
+
+        setCars(cars);
       };
       fetchCars();
     } catch (error) {
@@ -93,6 +120,12 @@ function Home({ navigation }: Props) {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (netInfo.isConnected === true) {
+      offlineSynchronize();
+    }
+  }, [netInfo.isConnected]);
 
   return (
     <Container>
@@ -146,14 +179,14 @@ function Home({ navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  button: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
+// const styles = StyleSheet.create({
+//   button: {
+//     width: 60,
+//     height: 60,
+//     borderRadius: 30,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+// });
 
 export default Home;
