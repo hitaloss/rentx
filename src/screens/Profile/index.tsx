@@ -3,6 +3,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 
 import {
@@ -24,6 +25,7 @@ import {
 import BackButton from "../../components/BackButton";
 import Input from "../../components/Input";
 import PasswordInput from "../../components/PasswordInput";
+import Button from "../../components/Button";
 
 import { AuthContext } from "../../contexts/AuthContext";
 
@@ -32,6 +34,8 @@ import { Feather } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as ImagePicker from "expo-image-picker";
+import * as Yup from "yup";
+import { updateSchema } from "../../schemas";
 
 type RootStackParamList = {
   Home: undefined;
@@ -43,7 +47,7 @@ interface Props {
 }
 
 function Profile({ navigation }: Props) {
-  const { user } = useContext(AuthContext);
+  const { user, signOut, userUpdate } = useContext(AuthContext);
 
   const [option, setOption] = useState<"dataEdit" | "passwordEdit">("dataEdit");
   const [avatar, setAvatar] = useState(user.avatar);
@@ -55,8 +59,6 @@ function Profile({ navigation }: Props) {
   const handleGoBack = () => {
     navigation.goBack();
   };
-
-  const handleSignOut = () => {};
 
   const handleOptionEdit = (option: "dataEdit" | "passwordEdit") => {
     setOption(option);
@@ -77,6 +79,42 @@ function Profile({ navigation }: Props) {
     if (result.assets[0].uri) {
       setAvatar(result.assets[0].uri);
     }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const data = { name, driverLicense };
+      await updateSchema.validate(data);
+      await userUpdate({
+        id: user.id,
+        user_id: user.user_id,
+        name,
+        email: user.email,
+        driver_license: driverLicense,
+        avatar,
+        token: user.token,
+      });
+
+      Alert.alert("Sucesso!", "Perfil atualizado");
+    } catch (error) {
+      if (error instanceof Yup.ValidationError) {
+        Alert.alert("Erro de validação", error.message);
+      }
+      Alert.alert("Erro ao atualizar", "Não foi possível atualizar o perfil");
+    }
+  };
+
+  const handleSignOut = () => {
+    Alert.alert("Sair", "Tem certeza que deseja sair da conta?", [
+      {
+        text: "Cancelar",
+        onPress: () => {},
+      },
+      {
+        text: "Sair",
+        onPress: () => signOut(),
+      },
+    ]);
   };
 
   return (
@@ -164,6 +202,7 @@ function Profile({ navigation }: Props) {
                 <PasswordInput iconName="lock" placeholder="Repetir senha" />
               </Section>
             )}
+            <Button title="Salvar alterações" onPress={handleUpdate} />
           </Content>
         </Container>
       </TouchableWithoutFeedback>
