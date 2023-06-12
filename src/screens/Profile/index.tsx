@@ -195,6 +195,7 @@ function Profile({ navigation }: Props) {
                   iconName="mail"
                   editable={false}
                   defaultValue={user.email}
+                  inactive
                 />
                 <Input
                   iconName="credit-card"

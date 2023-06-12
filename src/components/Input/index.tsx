@@ -9,9 +9,10 @@ import { useTheme } from "styled-components";
 interface Props extends TextInputProps {
   iconName: React.ComponentProps<typeof Feather>["name"];
   value?: string;
+  inactive?: boolean;
 }
 
-function Input({ iconName, value, ...rest }: Props) {
+function Input({ iconName, value, inactive = false, ...rest }: Props) {
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
@@ -27,7 +28,7 @@ function Input({ iconName, value, ...rest }: Props) {
 
   return (
     <Container isFocused={isFocused}>
-      <IconContainer>
+      <IconContainer inactive={inactive}>
         <Feather
           name={iconName}
           size={24}
@@ -38,7 +39,12 @@ function Input({ iconName, value, ...rest }: Props) {
           }
         />
       </IconContainer>
-      <InputText {...rest} onFocus={handleFocus} onBlur={handleBlur} />
+      <InputText
+        {...rest}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        inactive={inactive}
+      />
     </Container>
   );
 }
