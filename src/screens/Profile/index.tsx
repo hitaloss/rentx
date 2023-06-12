@@ -28,6 +28,7 @@ import PasswordInput from "../../components/PasswordInput";
 import Button from "../../components/Button";
 
 import { AuthContext } from "../../contexts/AuthContext";
+import { updateSchema } from "../../schemas";
 
 import { useTheme } from "styled-components";
 import { Feather } from "@expo/vector-icons";
@@ -35,7 +36,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as ImagePicker from "expo-image-picker";
 import * as Yup from "yup";
-import { updateSchema } from "../../schemas";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 type RootStackParamList = {
   Home: undefined;
@@ -55,13 +56,21 @@ function Profile({ navigation }: Props) {
   const [driverLicense, setDriverLicense] = useState(user.driver_license);
 
   const theme = useTheme();
+  const netInfo = useNetInfo();
 
   const handleGoBack = () => {
     navigation.goBack();
   };
 
   const handleOptionEdit = (option: "dataEdit" | "passwordEdit") => {
-    setOption(option);
+    if (netInfo.isConnected === false && option === "passwordEdit") {
+      Alert.alert(
+        "Você está sem conexão com a internet",
+        "Para alterar a senha é necessário conexão com a internet"
+      );
+    } else {
+      setOption(option);
+    }
   };
 
   const handleAvatarSelect = async () => {
