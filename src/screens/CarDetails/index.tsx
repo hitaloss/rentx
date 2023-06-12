@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { BackHandler, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet } from "react-native";
 
 import {
   Container,
@@ -14,6 +14,7 @@ import {
   About,
   Accessories,
   Footer,
+  OfflineInfo,
   CarImages,
 } from "./styles";
 import BackButton from "../../components/BackButton";
@@ -21,11 +22,13 @@ import ImageSlider from "../../components/ImageSlider";
 import Accessory from "../../components/Accessory";
 import Button from "../../components/Button";
 
+import api from "../../services/api";
 import { getAccessoryIcon } from "../../utils";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useRoute } from "@react-navigation/native";
 import { ICar } from "../../interfaces/cars";
+import { Car as ModelCar } from "../../database/models/Car";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import Animated, {
   Extrapolate,
@@ -36,19 +39,28 @@ import Animated, {
 } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { useTheme } from "styled-components";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { LogBox } from "react-native";
+
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+]);
 
 type RootStackParamList = {
-  Schedule: { car: ICar };
+  Schedule: { car: ModelCar };
 };
 interface Props {
   navigation: NativeStackNavigationProp<RootStackParamList, "Schedule">;
 }
 
 interface Params {
-  car: ICar;
+  car: ModelCar;
 }
 
 function CarDetails({ navigation }: Props) {
+  const [updatedCar, setUpdatedCar] = useState<ICar>({} as ICar);
+
+  const netInfo = useNetInfo();
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
@@ -84,6 +96,16 @@ function CarDetails({ navigation }: Props) {
     navigation.goBack();
   };
 
+  useEffect(() => {
+    const fetchUpdatedCar = async () => {
+      const res = await api.get(`cars/${car.id}`);
+      setUpdatedCar(res.data);
+    };
+    if (netInfo.isConnected === true) {
+      fetchUpdatedCar();
+    }
+  }, [netInfo.isConnected]);
+
   return (
     <Container>
       <StatusBar style="dark" translucent backgroundColor="transparent" />
@@ -101,7 +123,13 @@ function CarDetails({ navigation }: Props) {
 
         <Animated.View style={[sliderCarsStyleAnimation]}>
           <CarImages>
-            <ImageSlider imagesUrl={car.photos} />
+            <ImageSlider
+              imagesUrl={
+                !!updatedCar.photos
+                  ? updatedCar.photos
+                  : [{ id: car.thumbnail, photo: car.thumbnail }]
+              }
+            />
           </CarImages>
         </Animated.View>
       </Animated.View>
@@ -122,24 +150,33 @@ function CarDetails({ navigation }: Props) {
           </Description>
           <Rent>
             <Period>{car.period}</Period>
-            <Price>R$ {car.price}</Price>
+            <Price>R$ {netInfo.isConnected === true ? car.price : "..."}</Price>
           </Rent>
         </Details>
 
-        <Accessories>
-          {car.accessories.map((item) => (
-            <Accessory
-              name={item.name}
-              icon={getAccessoryIcon(item.type)}
-              key={item.type}
-            />
-          ))}
-        </Accessories>
+        {updatedCar.accessories && (
+          <Accessories>
+            {updatedCar.accessories.map((item) => (
+              <Accessory
+                name={item.name}
+                icon={getAccessoryIcon(item.type)}
+                key={item.type}
+              />
+            ))}
+          </Accessories>
+        )}
 
         <About>{car.about}</About>
       </Animated.ScrollView>
       <Footer>
-        <Button title="Escolher período do aluguel" onPress={handleSchedule} />
+        <Button
+          title="Escolher período do aluguel"
+          onPress={handleSchedule}
+          enabled={netInfo.isConnected === true}
+        />
+        {netInfo.isConnected === false && (
+          <OfflineInfo>Sem conexão à internet.</OfflineInfo>
+        )}
       </Footer>
     </Container>
   );
