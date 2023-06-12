@@ -46,7 +46,7 @@ function AuthProvider({ children }: Props) {
 
       const { token, user } = res.data;
 
-      api.defaults.headers.authorization = `Bearer ${token}`;
+      api.defaults.headers.common = { Authorization: `bearer ${token}` };
 
       const userCollection = database.get<ModelUser>("users");
       await database.action(async () => {
@@ -56,7 +56,7 @@ function AuthProvider({ children }: Props) {
             (newUser.email = user.email),
             (newUser.avatar = user.avatar),
             (newUser.driver_license = user.driver_license),
-            (newUser.token = user.token);
+            (newUser.token = token);
         });
       });
 
